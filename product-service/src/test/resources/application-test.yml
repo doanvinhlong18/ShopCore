@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:product-db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  grpc:
+    server:
+      inprocess:
+        name: product-test

@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${ORDER_DB_URL:jdbc:postgresql://localhost:5435/order_db}
+    username: ${ORDER_DB_USERNAME:shopcore_order}
+    password: ${ORDER_DB_PASSWORD:shopcore_order}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:shopcore}
+    password: ${RABBITMQ_PASSWORD:shopcore}
+  grpc:
+    client:
+      channels:
+        product:
+          address: ${PRODUCT_GRPC_ADDRESS:static://localhost:9092}
+          default-deadline: ${PRODUCT_GRPC_DEADLINE:1s}
+
+server:
+  port: ${SERVER_PORT:8083}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,118 @@
+name: shopcore
+
+services:
+  postgres-user:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${USER_DB_NAME:-user_db}
+      POSTGRES_USER: ${USER_DB_USERNAME:-shopcore_user}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD:-shopcore_user}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - shopcore-network
+
+  postgres-product:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${PRODUCT_DB_NAME:-product_db}
+      POSTGRES_USER: ${PRODUCT_DB_USERNAME:-shopcore_product}
+      POSTGRES_PASSWORD: ${PRODUCT_DB_PASSWORD:-shopcore_product}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-product-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - shopcore-network
+
+  postgres-order:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${ORDER_DB_NAME:-order_db}
+      POSTGRES_USER: ${ORDER_DB_USERNAME:-shopcore_order}
+      POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD:-shopcore_order}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - shopcore-network
+
+  postgres-notification:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification_db}
+      POSTGRES_USER: ${NOTIFICATION_DB_USERNAME:-shopcore_notification}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-shopcore_notification}
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-notification-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - shopcore-network
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - shopcore-network
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-shopcore}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-shopcore}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - shopcore-network
+
+networks:
+  shopcore-network:
+    name: shopcore-network
+
+volumes:
+  postgres-user-data:
+  postgres-product-data:
+  postgres-order-data:
+  postgres-notification-data:
+  redis-data:
+  rabbitmq-data:

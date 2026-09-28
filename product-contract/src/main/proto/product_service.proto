@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package shopcore.product.v1;
+
+option java_multiple_files = true;
+option java_package = "com.shopcore.contract.product.v1";
+option java_outer_classname = "ProductServiceProto";
+
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc ReserveInventory(ReserveInventoryRequest) returns (ReserveInventoryResponse);
+  rpc ReleaseInventory(ReleaseInventoryRequest) returns (ReleaseInventoryResponse);
+}
+
+enum ProductStatus {
+  PRODUCT_STATUS_UNSPECIFIED = 0;
+  PRODUCT_STATUS_ACTIVE = 1;
+  PRODUCT_STATUS_INACTIVE = 2;
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message GetProductResponse {
+  string product_id = 1;
+  string code = 2;
+  string name = 3;
+  string unit_price = 4;
+  ProductStatus status = 5;
+}
+
+message ReserveInventoryRequest {
+  string reservation_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+message ReserveInventoryResponse {
+  string reservation_id = 1;
+  string product_id = 2;
+  int32 reserved_quantity = 3;
+  int32 remaining_quantity = 4;
+}
+
+message ReleaseInventoryRequest {
+  string reservation_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+message ReleaseInventoryResponse {
+  string reservation_id = 1;
+  string product_id = 2;
+  int32 released_quantity = 3;
+  int32 remaining_quantity = 4;
+}

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: ${NOTIFICATION_DB_URL:jdbc:postgresql://localhost:5436/notification_db}
+    username: ${NOTIFICATION_DB_USERNAME:shopcore_notification}
+    password: ${NOTIFICATION_DB_PASSWORD:shopcore_notification}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:shopcore}
+    password: ${RABBITMQ_PASSWORD:shopcore}
+
+server:
+  port: ${SERVER_PORT:8084}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

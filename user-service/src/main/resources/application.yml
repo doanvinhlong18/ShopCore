@@ -9,6 +9,28 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+  flyway:
+    enabled: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+shopcore:
+  security:
+    jwt:
+      issuer: ${JWT_ISSUER:shopcore-user-service}
+      audience: ${JWT_AUDIENCE:shopcore-api}
+      access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:PT15M}
+      key-id: ${JWT_KEY_ID:shopcore-user-rs256-v1}
+      private-key-location: ${JWT_PRIVATE_KEY_LOCATION:file:./.local/jwt/private.pem}
+      public-key-location: ${JWT_PUBLIC_KEY_LOCATION:file:./.local/jwt/public.pem}
+    refresh:
+      token-ttl: ${REFRESH_TOKEN_TTL:P7D}
+      cookie-name: ${REFRESH_COOKIE_NAME:shopcore_refresh}
+      cookie-path: ${REFRESH_COOKIE_PATH:/api/auth}
+      cookie-secure: ${REFRESH_COOKIE_SECURE:false}
+      same-site: ${REFRESH_COOKIE_SAME_SITE:Strict}
+    allowed-origins: ${AUTH_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
 
 server:
   port: ${SERVER_PORT:8081}

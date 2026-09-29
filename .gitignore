@@ -5,6 +5,7 @@ target/
 
 ### Local environment ###
 .env
+.local/
 *.local.yml
 *.local.yaml
 

@@ -76,6 +76,40 @@ From an IDE, run each module's `*Application` main class instead.
 
 Health checks are available at `http://localhost:<service-port>/actuator/health`. RabbitMQ Management is available at `http://localhost:15672`.
 
+## User service authentication
+
+Generate a local RS256 key pair before running `user-service`:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\generate-jwt-keys.ps1
+docker compose up -d postgres-user
+.\mvnw.cmd -pl user-service -am package
+java -jar user-service\target\user-service-0.0.1-SNAPSHOT.jar --debug=false
+```
+
+The generated keys are stored under the ignored `.local/jwt` directory. Production must supply its own protected keys and set `REFRESH_COOKIE_SECURE=true`.
+
+Authentication endpoints:
+
+```text
+POST /api/auth/register   Create a USER account
+POST /api/auth/login      Return an access JWT and set the HttpOnly refresh cookie
+POST /api/auth/refresh    Rotate the refresh cookie and return a new access JWT
+POST /api/auth/logout     Revoke and clear the refresh cookie
+GET  /api/users/me        Read the current user from JWT sub
+PUT  /api/users/me        Update the current username and email
+GET  /.well-known/jwks.json  Publish the JWT public key
+```
+
+Example registration and login:
+
+```powershell
+curl.exe -i -X POST http://localhost:8081/api/auth/register -H "Content-Type: application/json" -d '{"username":"alice","email":"alice@example.com","password":"password123"}'
+curl.exe -i -c .local/cookies.txt -X POST http://localhost:8081/api/auth/login -H "Content-Type: application/json" -d '{"login":"alice","password":"password123"}'
+```
+
+Send the returned access token as `Authorization: Bearer <token>`. Refresh and logout use the `shopcore_refresh` cookie rather than a token in the JSON body.
+
 ## Communication boundaries
 
 ```text

@@ -7,3 +7,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  flyway:
+    enabled: true
+
+shopcore:
+  security:
+    jwt:
+      private-key-location: classpath:keys/test-private.pem
+      public-key-location: classpath:keys/test-public.pem
+    refresh:
+      cookie-secure: false
